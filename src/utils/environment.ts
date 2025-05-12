@@ -1,1 +1,0 @@
-export const pineconeApiKey = process.env.PINECONE_API_KEY!;

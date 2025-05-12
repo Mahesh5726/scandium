@@ -1,5 +1,5 @@
 import { Pinecone } from "@pinecone-database/pinecone";
-import { pineconeApiKey } from "./utils/environment.js";
+import { pineconeApiKey } from "../utils/environment/index.js";
 
 const users: {
   id: string;
@@ -205,36 +205,37 @@ const pc = new Pinecone({
 });
 
 try {
-  const index = pc.index("scandium");
+  //1.Create a new index
+
+  const index = pc.index("messages");
   const namespace = index.namespace("users");
 
-  // 1. Create
   await namespace.upsertRecords(users);
 
-  // 2. Read
-  const technologists = await namespace.searchRecords({
+  //2. Read/Search
+  const Technologiest = await namespace.searchRecords({
     query: {
-      inputs: {
-        text: "Top technologists of all time",
-      },
+      inputs: { text: "Top technologiest of all time" },
       topK: 10,
     },
   });
 
-  technologists.result.hits.forEach((hit) => {
-    console.log(hit, hit._score);
+  Technologiest.result.hits.forEach((hit) => {
+    console.log(hit._score, hit);
   });
 
-  // 3. Update
+  //3.Update
+
   await namespace.upsertRecords([
     {
       id: "4",
-      text: "Led South Africa out of apartheid and became its first Black president",
+      text: "Nelson Mandela was an anti-apartheid hero and the first Black president of South Africa",
     },
   ]);
 
-  // 4. Delete
-  namespace.deleteOne("30");
+  // //4.Delete
+
+  await namespace.deleteOne("30");
 } catch (e) {
   console.log(e);
 }
